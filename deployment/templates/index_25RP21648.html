@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Heart Disease Risk Prediction</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+/* ===== GLOBAL ===== */
+body{
+  background:#0f172a;
+  color:#f8fafc;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  font-family:'Segoe UI',sans-serif;
+}
+
+h2{
+  color:#38bdf8;
+  text-transform:uppercase;
+  letter-spacing:3px;
+  text-align:center;
+  margin-bottom:30px;
+}
+
+/* ===== FORM CARD ===== */
+.card{
+  background:rgba(30,41,59,.8);
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.form-label{
+  color:#94a3b8;
+  font-size:.85rem;
+  text-transform:uppercase;
+}
+
+.form-control{
+  background:#020617;
+  border:1px solid #334155;
+  color:#38bdf8;
+}
+
+.form-control:focus{
+  border-color:#38bdf8;
+  box-shadow:0 0 0 .2rem rgba(56,189,248,.25);
+}
+
+.btn-primary{
+  background:linear-gradient(90deg,#0ea5e9,#2563eb);
+  border:none;
+  border-radius:50px;
+  padding:12px;
+  font-weight:600;
+}
+
+/* ===== RESULT CARD (3 PROFESSIONAL COLORS ONLY) ===== */
+/* Colors used:
+   1) #020617 → Deep Navy (background)
+   2) #38bdf8 → Medical Blue (info)
+   3) #ef4444 → Clinical Red (danger)
+*/
+
+#resultCard{
+  background:#020617;
+  border:1px solid #1e293b;
+}
+
+#resultCard h4{
+  color:#38bdf8;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+
+#resultCard .list-group-item{
+  background:transparent !important;
+  border:none;
+  color:#cbd5f5;
+  padding:10px 0;
+  font-size:.95rem;
+}
+
+/* Actual Class */
+#resultCard .list-group-item.text-info{
+  color:#38bdf8 !important;
+  font-size:1.1rem;
+  font-weight:600;
+}
+
+/* Immediate danger */
+#resultCard .text-danger{
+  color:#ef4444 !important;
+  font-weight:700;
+}
+
+/* Divider */
+#resultCard .list-group-item:not(:last-child){
+  border-bottom:1px solid rgba(148,163,184,.15);
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2>Heart Disease Risk Prediction</h2>
+
+  <!-- FORM -->
+  <div class="card p-4 mb-4">
+    <form id="patientForm">
+      <div class="row g-3">
+        <div class="col-md-4"><label class="form-label">Age</label><input type="number" name="age" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Blood Pressure</label><input type="number" name="trestbps" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Cholesterol</label><input type="number" name="chol" class="form-control" required></div>
+
+        <div class="col-md-4"><label class="form-label">Max Heart Rate</label><input type="number" name="thalach" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">ST Depression</label><input type="number" step="0.1" name="oldpeak" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Sex (0=F,1=M)</label><input type="number" min="0" max="1" name="sex" class="form-control" required></div>
+
+        <div class="col-md-4"><label class="form-label">Chest Pain (0–3)</label><input type="number" min="0" max="3" name="cp" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Thal (1–3)</label><input type="number" min="1" max="3" name="thal" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">ECG (0–2)</label><input type="number" min="0" max="2" name="restecg" class="form-control" required></div>
+
+        <div class="col-md-4"><label class="form-label">Slope (0–2)</label><input type="number" min="0" max="2" name="slope" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Exercise Angina</label><input type="number" min="0" max="1" name="exang" class="form-control" required></div>
+        <div class="col-md-4"><label class="form-label">Major Vessels</label><input type="number" min="0" max="3" name="ca" class="form-control" required></div>
+
+        <div class="col-md-4"><label class="form-label">Fasting Sugar</label><input type="number" min="0" max="1" name="fbs" class="form-control" required></div>
+      </div>
+
+      <button class="btn btn-primary w-100 mt-4">Predict Risk</button>
+    </form>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultCard" class="card p-4 mt-4 d-none">
+    <h4 class="text-center mb-3">Prediction Result</h4>
+
+    <ul class="list-group list-group-flush text-start">
+      <li class="list-group-item text-info">
+        <strong>Actual Class:</strong> <span id="actualClass"></span>
+      </li>
+      <li class="list-group-item">Prob No Disease: <strong id="p0"></strong></li>
+      <li class="list-group-item">Prob Very Mild: <strong id="p1"></strong></li>
+      <li class="list-group-item">Prob Mild: <strong id="p2"></strong></li>
+      <li class="list-group-item">Prob Severe: <strong id="p3"></strong></li>
+      <li class="list-group-item text-danger">Prob Immediate Danger: <strong id="p4"></strong></li>
+    </ul>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+$("#patientForm").submit(function(e){
+  e.preventDefault();
+
+  let data = {};
+  $(this).serializeArray().forEach(f => data[f.name] = parseFloat(f.value));
+
+  $.ajax({
+    url: "/predict",
+    method: "POST",
+    contentType: "application/json",
+    data: JSON.stringify(data),
+    success: function(res){
+      $("#actualClass").text(res["Actual Class"]);
+      $("#p0").text((res["Prob_no disease"] * 100).toFixed(2) + "%");
+      $("#p1").text((res["Prob_very mild"] * 100).toFixed(2) + "%");
+      $("#p2").text((res["Prob_mild"] * 100).toFixed(2) + "%");
+      $("#p3").text((res["Prob_severe"] * 100).toFixed(2) + "%");
+      $("#p4").text((res["Prob_immediate danger"] * 100).toFixed(2) + "%");
+
+      $("#resultCard").removeClass("d-none");
+    },
+    error: function(err){
+      alert(err.responseJSON?.error || "Prediction failed");
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+No disease
+Very mild
+Mild
+Severe
+Immediate danger

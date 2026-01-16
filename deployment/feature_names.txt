@@ -1,0 +1,25 @@
+num__age
+num__trestbps
+num__chol
+num__thalach
+num__oldpeak
+num__ca
+cat__sex_Female
+cat__sex_Male
+cat__cp_Asymptomatic
+cat__cp_Atypical Angina
+cat__cp_Non-Anginal Pain
+cat__cp_Typical Angina
+cat__fbs_False
+cat__fbs_True
+cat__restecg_LV hypertrophy
+cat__restecg_Normal
+cat__restecg_ST-T abnormality
+cat__exang_No
+cat__exang_Yes
+cat__slope_Downsloping
+cat__slope_Flat
+cat__slope_Upsloping
+cat__thal_Fixed defect
+cat__thal_Normal
+cat__thal_Reversible defect
